@@ -1,10 +1,12 @@
 # ParseC
 
-ParseC is a LLVM/Clang-based tool to parse a C program. It extracts functions, structures, etc. along with their inter-dependencies.
+ParseC parses a C program and writes a JSON representation of the parse tree (the AST).
 
-ParseC is built as part of the [Docker image](Dockerfile) for this project. However, it can also be built and run independently.
+ParseC uses the Clang compiler frontend to extract source-level syntactic information about the C program, and runs an LLVM pass to perform call-graph analysis. This allows it to sometimes resolve indirect calls (e.g., calls that involve function pointers), resulting an analysis that is potentially more complete than one that uses only Clang or libclang.
 
-## Prerequisites
+## Installation
+
+### Prerequisites
 
 ParseC is intended for use only with Linux. The following utilities and libraries are needed:
 
@@ -13,7 +15,7 @@ ParseC is intended for use only with Linux. The following utilities and librarie
 - `bear`
 - `llvm-14`, `llvm-14-dev`, `llvm-14-tools`, `clang-14`, `libclang-14-dev`
 
-## Build
+### Build
 
 ```sh
 mkdir build && cd build
@@ -24,11 +26,15 @@ If compilation is successful, the `parsec` binary will be created in the `build`
 
 ## Usage
 
+### Running on a single C file
+
 `parsec` can be run on a single C file, say `hello.c`, as follows:
 
 ```sh
 parsec hello.c
 ```
+
+### Running on multiple C files
 
 To run it on a full project, you need a `compile_commands.json` compilation database for your project. This can be obtained in a few different ways:
 
@@ -51,6 +57,10 @@ Here, `*.c` is a bash glob pattern representing all C files in your current dire
 # From the directory containing compile_commands.json
 parsec src/*.c
 ```
+
+### Options and Customization
+
+`parsec` has two command-line flags, `--add-instr` and `--rename-main`. These are intended for internal use and debugging only.
 
 ## Output
 
@@ -130,7 +140,3 @@ The output of `parsec` is a single JSON file, `analysis.json`, created in the cu
 ```
 
 Note that the field `files` is intended to be populated with a list of source files and metadata about each one; however, this functionality is not yet implemented and the `files` field will currently always contain an empty list.
-
-## Options and Customization
-
-`parsec` has two command-line flags, `--add-instr` and `--rename-main`. These are intended for internal use and debugging only.
