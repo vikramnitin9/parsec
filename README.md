@@ -64,79 +64,137 @@ parsec src/*.c
 
 ## Output
 
-The output of `parsec` is a single JSON file, `analysis.json`, created in the current working directory. The format of this file is described herein:
+The output of `parsec` is a single JSON file, `analysis.json`, created in the current working directory. This file contains a structured representation of information extracted from the analyzed source code.
+
+The sections below document the full structure and meaning of each field in the output. The JSON shown is illustrative; actual output will contain concrete values.
+
+---
+
+## Example Structure
 
 ```json
 {
   "files": [],
-  "functions": [
-    {
-      "name": "str",
-      "signature": "str",
-      "num_args": "int",
-      "argTypes": ["str"],
-      "argNames": ["str"],
-      "returnType": ["str"],
-      "filename": "str",
-      "startLine": "int",
-      "endLine": "int",
-      "startCol": "int",
-      "endCol": "int",
-      "callees": [
-        {
-          "name": "str"
-        }
-      ],
-      "structs": [
-        {
-          "name": "str"
-        }
-      ],
-      "enums": [
-        {
-          "name": "str"
-        }
-      ],
-      "globals": [
-        {
-          "name": "str"
-        }
-      ]
-    }
-  ],
-  "structs": [
-    {
-      "name": "str",
-      "filename": "str",
-      "startLine": "int",
-      "endLine": "int",
-      "startCol": "int",
-      "endCol": "int"
-    }
-  ],
-  "enums": [
-    {
-      "name": "str",
-      "filename": "str",
-      "startLine": "int",
-      "endLine": "int",
-      "startCol": "int",
-      "endCol": "int"
-    }
-  ],
-  "globals": [
-    {
-      "name": "str",
-      "type": "str",
-      "filename": "str",
-      "startLine": "int",
-      "endLine": "int",
-      "startCol": "int",
-      "endCol": "int",
-      "isStatic": "bool"
-    }
-  ]
+  "functions": [],
+  "structs": [],
+  "enums": [],
+  "globals": []
 }
 ```
 
-Note that the field `files` is intended to be populated with a list of source files and metadata about each one; however, this functionality is not yet implemented and the `files` field will currently always contain an empty list.
+---
+
+## Top‑Level Fields
+
+| Field       | Type  | Description                                                                              |
+| ----------- | ----- | ---------------------------------------------------------------------------------------- |
+| `files`     | array | List of source files and their metadata. **Currently not implemented** and always empty. |
+| `functions` | array | Functions discovered in the analyzed source code.                                        |
+| `structs`   | array | Struct definitions found in the codebase.                                                |
+| `enums`     | array | Enum definitions found in the codebase.                                                  |
+| `globals`   | array | Global variables found in the codebase.                                                  |
+
+---
+
+## `files[]`
+
+> **Status:** Not yet implemented
+
+This field is reserved for future use and will eventually contain metadata for each source file processed by `parsec`.
+
+Expected fields may include (subject to change):
+
+| Field      | Type   | Description                     |
+| ---------- | ------ | ------------------------------- |
+| `filename` | string | Path or name of the source file |
+| `language` | string | Detected programming language   |
+| `hash`     | string | Content hash of the file        |
+
+---
+
+## `functions[]`
+
+Each entry represents a single function definition.
+
+### Fields
+
+| Field        | Type     | Description                                  |
+| ------------ | -------- | -------------------------------------------- |
+| `name`       | string   | Function name                                |
+| `signature`  | string   | Full function signature as written in source |
+| `num_args`   | integer  | Number of arguments                          |
+| `argTypes`   | string[] | Types of each argument                       |
+| `argNames`   | string[] | Names of each argument                       |
+| `returnType` | string[] | Return type(s)                               |
+| `filename`   | string   | Source file containing the function          |
+| `startLine`  | integer  | Line number where the function starts        |
+| `endLine`    | integer  | Line number where the function ends          |
+| `startCol`   | integer  | Column where the function starts             |
+| `endCol`     | integer  | Column where the function ends               |
+| `callees`    | object[] | Functions called by this function            |
+| `structs`    | object[] | Structs referenced by this function          |
+| `enums`      | object[] | Enums referenced by this function            |
+| `globals`    | object[] | Globals referenced by this function          |
+
+### `callees[]`, `structs[]`, `enums[]`, `globals[]`
+
+Each object contains:
+
+| Field  | Type   | Description            |
+| ------ | ------ | ---------------------- |
+| `name` | string | Referenced symbol name |
+
+---
+
+## `structs[]`
+
+Each entry represents a struct definition.
+
+| Field       | Type    | Description                       |
+| ----------- | ------- | --------------------------------- |
+| `name`      | string  | Struct name                       |
+| `filename`  | string  | Source file containing the struct |
+| `startLine` | integer | Starting line number              |
+| `endLine`   | integer | Ending line number                |
+| `startCol`  | integer | Starting column                   |
+| `endCol`    | integer | Ending column                     |
+
+---
+
+## `enums[]`
+
+Each entry represents an enum definition.
+
+| Field       | Type    | Description                     |
+| ----------- | ------- | ------------------------------- |
+| `name`      | string  | Enum name                       |
+| `filename`  | string  | Source file containing the enum |
+| `startLine` | integer | Starting line number            |
+| `endLine`   | integer | Ending line number              |
+| `startCol`  | integer | Starting column                 |
+| `endCol`    | integer | Ending column                   |
+
+---
+
+## `globals[]`
+
+Each entry represents a global variable.
+
+| Field       | Type    | Description                               |
+| ----------- | ------- | ----------------------------------------- |
+| `name`      | string  | Global variable name                      |
+| `type`      | string  | Variable type                             |
+| `filename`  | string  | Source file containing the variable       |
+| `startLine` | integer | Starting line number                      |
+| `endLine`   | integer | Ending line number                        |
+| `startCol`  | integer | Starting column                           |
+| `endCol`    | integer | Ending column                             |
+| `isStatic`  | boolean | Whether the variable is declared `static` |
+
+---
+
+## Notes
+
+* Line and column numbers are 1‑indexed.
+* Arrays may be empty if no corresponding entities are found.
+* The output format may evolve; consumers should ignore unknown fields for forward compatibility.
