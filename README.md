@@ -48,18 +48,23 @@ To run it on a full project, you need a `compile_commands.json` compilation data
 Once you have `compile_commands.json`, you can run `parsec` like this:
 
 ```sh
-# [Method 1] If `.` is the directory containing `compile_commands.json`, run
-parsec -p .
-# [Method 2] If all your source files are located at the top level of some directory, say `src`
+# [Method 1] If all your source files are located at the top level of some directory, say `src`
 # From the directory containing compile_commands.json, run
 parsec src/*.c
 ```
 
-Here, `*.c` is a bash glob pattern representing all C files in your current directory. The glob pattern will be expanded _by your shell_ before being passed to `parsec`. Note that this will not work if you have source files in multiple nested directories below the current directory. In that case, either use Method 1, or, if your shell supports recursive globs, run
+Here, `*.c` is a bash glob pattern representing all C files in your current directory. The glob pattern will be expanded _by your shell_ before being passed to `parsec`. Note that this will not work if you have source files in multiple nested directories below the current directory. In that case, if your shell supports recursive globs, use this:
 
 ```sh
-# [Method 3] Only if your shell supports recursive globs!
+# [Method 2] Only if your shell supports recursive globs!
 parsec **/*.c
+```
+
+If your shell does not support recursive globs, then you have no choice but to list all the subdirectories individually like this:
+
+```sh
+# [Method 3] 
+parsec src/a/*.c src/a/b/*.c src/d/*.c
 ```
 
 ### Options and Customization
