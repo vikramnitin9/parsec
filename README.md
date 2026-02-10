@@ -205,5 +205,19 @@ Each entry represents a global variable.
 ## Notes
 
 - Line and column numbers are 1‑indexed.
+- All the `filename` fields are based on the source file names as passed to ParseC. So if you were to run:
+  
+```sh
+parsec src/*.c
+```
+
+Then the filenames would be `src/file1.c`, etc. However, if you were to run:
+
+```sh
+parsec /home/user/proj/src/*.c
+```
+
+Then the filenames would be `/home/user/proj/src/file1.c`, etc.
+
 - Arrays may be empty if no corresponding entities are found.
 - The output format may evolve; consumers should ignore unknown fields for forward compatibility.
